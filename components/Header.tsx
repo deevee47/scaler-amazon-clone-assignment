@@ -48,7 +48,7 @@ const Header = () => {
           {/* Sign In */}
           <Link
             href={"/login"}
-            className="text-sm text-gray-100 flex flex-col justify-center leading-none px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%]"
+            className="text-sm text-white flex flex-col justify-center leading-none px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%]"
           >
             <p className="text-xs">Hello, Sign in</p>
             <p className="text-white font-bold">Account &amp; Lists</p>
@@ -56,7 +56,7 @@ const Header = () => {
           {/* Returns & Orders */}
           <Link
             href={"/orders"}
-            className="text-sm text-gray-100 flex flex-col justify-center leading-none px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%]"
+            className="text-sm text-white flex flex-col justify-center leading-none px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%]"
           >
             <p className="text-xs">Returns</p>
             <p className="text-white font-bold">&amp; Orders</p>
