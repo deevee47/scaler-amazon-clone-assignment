@@ -8,13 +8,21 @@ export const footerData = [
       {
         _id: "001",
         listData: [
-          "Careers",
-          "Blog",
           "About Amazon",
-          "Investor Relations",
-          "Amazon Devices",
+          "Careers",
+          "Press Releases",
           "Amazon Science",
         ],
+      },
+    ],
+  },
+  {
+    _id: 2225,
+    title: "Connect with Us",
+    listItem: [
+      {
+        _id: "005",
+        listData: ["Facebook", "Twitter", "Instagram"],
       },
     ],
   },
@@ -25,29 +33,15 @@ export const footerData = [
       {
         _id: "002",
         listData: [
-          "Sell products on Amazon",
-          "Sell on Amazon Business",
-          "Sell apps on Amazon",
+          "Sell on Amazon",
+          "Sell under Amazon Accelerator",
+          "Protect and Build Your Brand",
+          "Amazon Global Selling",
+          "Supply to Amazon",
           "Become an Affiliate",
+          "Fulfilment by Amazon",
           "Advertise Your Products",
-          "Sell Product with Us",
-          "Host an Amazon Hub",
-          "See More Make Money with Us",
-        ],
-      },
-    ],
-  },
-  {
-    _id: 2223,
-    title: "Amazon Payment Products",
-    listItem: [
-      {
-        _id: "003",
-        listData: [
-          "Amazon Business Card",
-          "Shop with Points",
-          "Reload Your Balance",
-          "Amazon Currency Converter",
+          "Amazon Pay on Merchants",
         ],
       },
     ],
@@ -59,14 +53,12 @@ export const footerData = [
       {
         _id: "004",
         listData: [
-          "Amazon and COVID-19",
           "Your Account",
-          "Your Orders",
-          "Shipping Rates & Policies",
-          "Returns & Replacements",
-          "Manage Your Content and Devices",
-          "Amazon Assistant",
-          "FAQ & Help",
+          "Returns Centre",
+          "Recalls and Product Safety Alerts",
+          "100% Purchase Protection",
+          "Amazon App Download",
+          "Help",
         ],
       },
     ],
