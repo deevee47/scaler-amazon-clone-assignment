@@ -6,29 +6,47 @@ import Link from "next/link";
 import { CiSearch } from "react-icons/ci";
 import { Product } from "@/type";
 import CategoryListView from "./CategoryListView";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const SearchInput = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState<Product[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searched, setSearched] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
-  // Debounced API search — fires 5s after user stops typing
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
   useEffect(() => {
-    if (!searchQuery.trim()) {
+    if (!debouncedQuery.trim()) {
       setResults([]);
+      setSearched(false);
       return;
     }
 
-    const timer = setTimeout(() => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/products?search=${encodeURIComponent(searchQuery)}&limit=10&offset=0`
-      )
-        .then((r) => r.json())
-        .then((j) => setResults(j.data?.products ?? []));
-    }, 5000);
+    setSearching(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/products?search=${encodeURIComponent(debouncedQuery)}&limit=10&offset=0`
+    )
+      .then((r) => r.json())
+      .then((j) => {
+        setResults(j.data?.products ?? []);
+        setSearching(false);
+        setSearched(true);
+      });
+  }, [debouncedQuery]);
 
-    return () => clearTimeout(timer);
+  // Show "Searching…" as soon as query changes but debounce hasn't fired yet
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      setSearching(true);
+      setSearched(false);
+    } else {
+      setResults([]);
+      setSearching(false);
+      setSearched(false);
+    }
   }, [searchQuery]);
 
   useEffect(() => {
@@ -47,6 +65,13 @@ const SearchInput = () => {
     };
   }, []);
 
+  function handleClear() {
+    setSearchQuery("");
+    setResults([]);
+    setSearching(false);
+    setSearched(false);
+  }
+
   return (
     <div
       ref={searchContainerRef}
@@ -63,7 +88,7 @@ const SearchInput = () => {
       />
       {searchQuery && (
         <MdOutlineClose
-          onClick={() => { setSearchQuery(""); setResults([]); }}
+          onClick={handleClear}
           className="text-xl text-amazonLight hover:text-red-600 absolute right-14 duration-200 cursor-pointer"
         />
       )}
@@ -72,20 +97,22 @@ const SearchInput = () => {
       </span>
       {isInputFocused && searchQuery && (
         <div className="absolute left-0 top-12 w-full mx-auto h-auto max-h-96 bg-white rounded-md overflow-y-scroll cursor-pointer text-black">
-          {results.length > 0 ? (
+          {searching ? (
+            <div className="py-6 px-5 text-sm text-gray-500">Searching…</div>
+          ) : results.length > 0 ? (
             <div className="flex flex-col">
               {results.map((item: Product) => (
                 <Link
                   key={item?.id}
                   href={`/products/${item?.id}`}
-                  onClick={() => { setSearchQuery(""); setResults([]); }}
+                  onClick={() => { setSearchQuery(""); setResults([]); setSearched(false); }}
                   className="flex items-center gap-x-2 text-base font-medium hover:bg-lightText/30 px-3 py-1.5"
                 >
                   <CiSearch className="text-lg" /> {item?.title}
                 </Link>
               ))}
             </div>
-          ) : (
+          ) : searched ? (
             <div className="py-10 px-5">
               <p className="text-base">
                 Nothing matched with{" "}
@@ -95,7 +122,7 @@ const SearchInput = () => {
                 please try again.
               </p>
             </div>
-          )}
+          ) : null}
         </div>
       )}
     </div>
