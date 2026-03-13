@@ -47,7 +47,7 @@ const Header = () => {
           </div>
           {/* Sign In */}
           <Link
-            href={"/login"}
+            href={"/"}
             className="hidden sm:flex text-sm text-white flex-col justify-center leading-none px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%]"
           >
             <p className="text-xs">Hello, Sign in</p>
