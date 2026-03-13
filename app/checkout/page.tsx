@@ -44,8 +44,48 @@ export default function CheckoutPage() {
       showToast("Please add a delivery address before placing your order.");
       return;
     }
-    await clearCart();
-    router.push("/");
+
+    const paymentMethodMap: Record<string, "cod" | "card" | "upi"> = {
+      "amazon-pay-balance": "cod",
+      "amazon-pay-later": "cod",
+      "icici-amazon": "card",
+      "icici": "card",
+      "upi": "upi",
+    };
+
+    const body = {
+      email: "guest@amazon.in",
+      shippingAddress: {
+        name: address.fullName,
+        phone: address.mobile ?? "",
+        line1: `${address.flat ?? ""} ${address.area ?? ""}`.trim(),
+        line2: address.landmark ?? undefined,
+        city: address.city ?? "",
+        state: address.state ?? "",
+        zip: address.pincode ?? "",
+        country: address.country ?? "India",
+      },
+      paymentMethod: paymentMethodMap[selectedPayment] ?? "cod",
+      items: cartItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      })),
+    };
+
+    try {
+      const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+      const res = await fetch(`${BASE_URL}/api/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error("Order failed");
+      const data = await res.json();
+      await clearCart();
+      router.push(`/order-confirmation/${data.id}`);
+    } catch {
+      showToast("Failed to place order. Please try again.");
+    }
   }
 
   return (
