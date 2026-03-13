@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { store, CartItem } from "@/lib/store";
+import { store, CartItem, WishlistItem } from "@/lib/store";
+import WishlistSidebarCard from "@/components/WishlistSidebarCard";
 
 function FulfilledBadge() {
   return (
@@ -21,10 +22,12 @@ function CartItemRow({
   item,
   isSelected,
   onToggle,
+  onSaveForLater,
 }: {
   item: CartItem;
   isSelected: boolean;
   onToggle: () => void;
+  onSaveForLater: () => void;
 }) {
   const { updateQuantity, removeFromCart } = store();
   const unitPrice = parseFloat(item.price);
@@ -53,12 +56,12 @@ function CartItemRow({
       />
 
       {/* Product image */}
-      <div className={`relative w-[130px] h-[100px] flex-shrink-0 bg-white transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
+      <div className={`relative w-[250px] h-[170px] flex-shrink-0 bg-white transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         <Image
           src={item.thumbnail}
           alt={item.title}
           fill
-          className="object-contain"
+          className="object-cover"
           sizes="130px"
         />
       </div>
@@ -67,12 +70,12 @@ function CartItemRow({
       <div className={`flex-1 min-w-0 transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         <Link
           href={`/products/${item.productId}`}
-          className="text-sm text-gray-900 leading-snug line-clamp-2 mb-1 hover:text-[#C45500] hover:underline block"
+          className="text-xl text-gray-900 leading-snug line-clamp-2 mb-1 hover:text-[#C45500] hover:underline block"
         >
           {item.title}
         </Link>
 
-        <p className="text-sm text-[#007600] mb-0.5">
+        <p className="text-xs text-[#007600] mb-0.5">
           {item.availabilityStatus ?? "In stock"}
         </p>
 
@@ -85,7 +88,6 @@ function CartItemRow({
               month: "short",
             })}
           </span>{" "}
-          available at checkout
         </p>
 
         <div className="mb-1">
@@ -136,7 +138,10 @@ function CartItemRow({
             Delete
           </button>
           <span className="text-gray-300 select-none">|</span>
-          <button className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline">
+          <button
+            onClick={onSaveForLater}
+            className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline"
+          >
             Save for later
           </button>
           <span className="text-gray-300 select-none">|</span>
@@ -151,7 +156,7 @@ function CartItemRow({
       </div>
 
       {/* Price column */}
-      <div className={`w-[180px] flex-shrink-0 text-right transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
+      <div className={`w-[220px] flex-shrink-0 text-right transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         {item.discountPercentage && item.discountPercentage > 0 ? (
           <>
             <p className="text-[#CC0C39] text-sm font-medium mb-0.5">
@@ -189,12 +194,64 @@ function CartItemRow({
   );
 }
 
+function SavedItemCard({ item }: { item: WishlistItem }) {
+  const { moveToCart, removeFromWishlist } = store();
+  const isLowStock = item.availabilityStatus?.toLowerCase().includes("low");
+
+  return (
+    <div className="flex flex-col border border-gray-200 rounded bg-white overflow-hidden">
+      <div className="relative w-full h-[200px] bg-white">
+        <Image
+          src={item.thumbnail}
+          alt={item.title}
+          fill
+          className="object-contain"
+          sizes="250px"
+        />
+      </div>
+      <div className="flex flex-col flex-1 p-3 gap-1.5">
+        <p className="text-lg font-medium text-gray-900 line-clamp-2 leading-4">{item.title}</p>
+        <p className="text-lg font-bold text-gray-900">
+          ₹{parseFloat(item.price).toLocaleString("en-IN")}
+        </p>
+        <p className="text-xs font-medium" style={{ color: isLowStock ? "#CC0C39" : "#007600" }}>
+          {item.availabilityStatus ?? "In stock"}
+        </p>
+        <FulfilledBadge />
+        <button
+          onClick={() => moveToCart(item.productId)}
+          className="w-full mt-1 py-1.5 text-xs font-medium text-gray-900 bg-white border border-gray-400 rounded-full hover:bg-gray-50"
+        >
+          Move to cart
+        </button>
+        <div className="flex items-center gap-1.5 text-xs flex-wrap">
+          <button
+            onClick={() => removeFromWishlist(item.productId)}
+            className="text-[#2261A1] hover:text-[#C45500] hover:underline"
+          >
+            Delete
+          </button>
+          <span className="text-gray-300 select-none">|</span>
+          <span className="text-[#2261A1] hover:text-[#C45500] hover:underline cursor-pointer">
+            Add to list
+          </span>
+          <span className="text-gray-300 select-none">|</span>
+          <span className="text-[#2261A1] hover:text-[#C45500] hover:underline cursor-pointer">
+            See more like this
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CartPage() {
-  const { cartItems, cartLoading, fetchCart } = store();
+  const { cartItems, cartLoading, fetchCart, wishlistItems, fetchWishlist, saveForLater, addToCart } = store();
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     fetchCart();
+    fetchWishlist();
   }, []);
 
   // Keep selectedIds in sync when items are added/removed
@@ -230,7 +287,7 @@ export default function CartPage() {
 
   return (
     <div className="bg-[#EAEDED] min-h-screen py-4">
-      <div className="max-w-[1200px] mx-auto px-4 flex gap-4 items-start">
+      <div className="w-full px-6 flex gap-4 items-start">
         {/* Left column */}
         <div className="flex-1 min-w-0">
           {/* Cart white card */}
@@ -249,7 +306,7 @@ export default function CartPage() {
               )}
             </div>
 
-            <div className="flex justify-end text-sm text-gray-500 px-5 pb-2 border-b border-gray-200">
+            <div className="flex justify-end text-sm text-gray-600 px-5 border-b border-gray-200">
               Price
             </div>
 
@@ -280,12 +337,13 @@ export default function CartPage() {
                 item={item}
                 isSelected={selectedIds.has(item.productId)}
                 onToggle={() => toggleItem(item.productId)}
+                onSaveForLater={() => saveForLater(item.productId)}
               />
             ))}
 
             {cartItems.length > 0 && (
               <div className="px-5 py-3 text-right border-t border-gray-200">
-                <span className="text-base text-gray-900">
+                <span className="text-lg font-semimedium text-gray-900">
                   Subtotal ({totalItems}{" "}
                   {totalItems === 1 ? "item" : "items"}):{" "}
                   <strong className="font-bold">
@@ -309,17 +367,25 @@ export default function CartPage() {
                 Buy it again
               </button>
             </div>
-            <p className="text-sm text-gray-500">No saved items.</p>
+            {wishlistItems.length === 0 ? (
+              <p className="text-sm text-gray-500">No saved items.</p>
+            ) : (
+              <div className="grid grid-cols-4 gap-4">
+                {wishlistItems.map((item) => (
+                  <SavedItemCard key={item.productId} item={item} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Right sidebar */}
-        <div className="w-[280px] flex-shrink-0 flex flex-col gap-4">
+        <div className="w-[320px] flex-shrink-0 flex flex-col gap-4">
           {/* Proceed to Buy card */}
           <div className="border border-[#D5D9D9] rounded p-4 bg-white">
             <div className="flex items-center gap-2 mb-2">
               <div className="flex-1 h-3 bg-[#0C7B3C] rounded-full" />
-              <span className="text-sm text-black font-semibold whitespace-nowrap">
+              <span className="text-sm text-black whitespace-nowrap">
                 ₹499
               </span>
             </div>
@@ -363,6 +429,10 @@ export default function CartPage() {
               Join Prime Shopping Edition at ₹399/year
             </button>
           </div>
+
+          {wishlistItems.length > 0 && (
+            <WishlistSidebarCard wishlistItems={wishlistItems} addToCart={addToCart} />
+          )}
         </div>
       </div>
     </div>

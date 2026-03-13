@@ -378,7 +378,6 @@ export default async function ProductDetailPage({
             <div className="text-3xl font-medium text-gray-900 leading-tight">
               <span className="text-base align-top mt-1 inline-block">₹</span>
               {price.toLocaleString("en-IN")}
-              <span className="text-sm align-super">00</span>
             </div>
 
             {/* Fulfilled badge */}

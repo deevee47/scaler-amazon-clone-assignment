@@ -123,7 +123,6 @@ export default async function SponsoredBanner() {
               <span className="text-2xl text-black font-medium">
                 <span className="text-md">₹</span>
                 {price.toLocaleString("en-IN")}
-                <span className="text-sm align-super">00</span>
               </span>
               <span className="text-md text-gray-500 line-through">
                 ₹{mrp.toLocaleString("en-IN")}.00
