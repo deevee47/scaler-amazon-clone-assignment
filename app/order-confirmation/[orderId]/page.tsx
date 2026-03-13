@@ -70,7 +70,7 @@ export default function OrderConfirmationPage() {
         return res.json();
       })
       .then((data) => {
-        setOrder(data);
+        setOrder(data.data);
         setLoading(false);
       })
       .catch((err) => {
