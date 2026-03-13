@@ -36,6 +36,8 @@ interface RawCartItem {
     thumbnail: string;
     stock: number;
     discountPercentage: string;
+    brand: string | null;
+    availabilityStatus: string;
   };
 }
 
@@ -96,8 +98,8 @@ export const store = create<StoreType>()((set, get) => ({
         price: item.product.price,
         thumbnail: item.product.thumbnail,
         discountPercentage: parseFloat(item.product.discountPercentage),
-        availabilityStatus: item.product.stock > 0 ? "In Stock" : "Out of Stock",
-        brand: null,
+        availabilityStatus: item.product.availabilityStatus,
+        brand: item.product.brand,
       }));
       set({ cartItems: mapped });
     } finally {

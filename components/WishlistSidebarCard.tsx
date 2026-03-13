@@ -70,7 +70,7 @@ export default function WishlistSidebarCard({ wishlistItems, addToCart }: Props)
 
                 <button
                   onClick={() => addToCart(item.productId)}
-                  className="w-full mt-1 text-sm bg-white hover:bg-gray-50 text-gray-900 font-medium py-1.5 rounded-full border border-gray-400"
+                  className="w-full mt-1 text-sm bg-white hover:bg-gray-50 text-gray-900 font-medium py-1 rounded-full border border-gray-400"
                 >
                   Add to cart
                 </button>

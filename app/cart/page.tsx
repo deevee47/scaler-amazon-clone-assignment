@@ -110,15 +110,15 @@ function CartItemRow({
 
         {/* Quantity pill + action links */}
         <div className="flex items-center flex-wrap gap-x-1.5 gap-y-1 mt-2">
-          <div className="inline-flex items-center border-2 border-[#FFD814] rounded-full px-3 py-0.5 gap-3 bg-white">
+          <div className="inline-flex items-center border-3 border-[#FFD814] rounded-full px-3 py-0.5 gap-3 bg-white">
             <button
               onClick={handleDecrement}
-              className="text-black hover:text-gray-900 text-base leading-none"
+              className="text-black hover:text-gray-900 font-bold text-base leading-none"
               aria-label="Decrease quantity or remove"
             >
               −
             </button>
-            <span className="text-sm text-black font-medium min-w-[1ch] text-center">
+            <span className="text-sm text-black font-bold min-w-[1ch] text-center">
               {item.quantity}
             </span>
             <button
@@ -149,9 +149,19 @@ function CartItemRow({
             See more like this
           </span>
           <span className="text-gray-300 select-none">|</span>
-          <span className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline cursor-pointer">
+          <button
+            className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline"
+            onClick={() => {
+              const url = `${window.location.origin}/products/${item.productId}`;
+              if (navigator.share) {
+                navigator.share({ title: item.title, url });
+              } else {
+                navigator.clipboard.writeText(url);
+              }
+            }}
+          >
             Share
-          </span>
+          </button>
         </div>
       </div>
 
@@ -159,7 +169,7 @@ function CartItemRow({
       <div className={`w-[220px] flex-shrink-0 text-right transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         {item.discountPercentage && item.discountPercentage > 0 ? (
           <>
-            <p className="text-[#CC0C39] text-sm font-medium mb-0.5">
+            <p className="text-[#CC0C39] text-xs font-bold mb-0.5">
               {dealLabel(item.productId)}
             </p>
             <div className="flex items-center justify-end gap-1.5 mb-0.5">
@@ -172,7 +182,7 @@ function CartItemRow({
               </span>
             </div>
             {mrp && (
-              <p className="text-sm text-gray-500">
+              <p className="text-xs text-gray-500">
                 M.R.P.:{" "}
                 <span className="line-through">
                   ₹{mrp.toLocaleString("en-IN")}
@@ -224,18 +234,16 @@ function SavedItemCard({ item }: { item: WishlistItem }) {
         >
           Move to cart
         </button>
-        <div className="flex items-center gap-1.5 text-xs flex-wrap">
+        <div className="flex flex-col text-xs gap-1.5">
           <button
             onClick={() => removeFromWishlist(item.productId)}
-            className="text-[#2261A1] hover:text-[#C45500] hover:underline"
+            className="text-left text-[#2261A1] hover:text-[#C45500] hover:underline"
           >
             Delete
           </button>
-          <span className="text-gray-300 select-none">|</span>
           <span className="text-[#2261A1] hover:text-[#C45500] hover:underline cursor-pointer">
             Add to list
           </span>
-          <span className="text-gray-300 select-none">|</span>
           <span className="text-[#2261A1] hover:text-[#C45500] hover:underline cursor-pointer">
             See more like this
           </span>
