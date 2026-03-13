@@ -11,6 +11,7 @@ export interface CartItem {
   thumbnail: string;
   brand?: string | null;
   availabilityStatus?: string | null;
+  discountPercentage?: number;
 }
 
 interface StoreType {

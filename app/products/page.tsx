@@ -39,7 +39,7 @@ export default async function ProductsPage({
   searchParams: Promise<{ category?: string; search?: string; page?: string }>;
 }) {
   const { category, search, page = "1" } = await searchParams;
-  const limit = 20;
+  const limit = 10;
   const offset = (parseInt(page) - 1) * limit;
 
   const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });

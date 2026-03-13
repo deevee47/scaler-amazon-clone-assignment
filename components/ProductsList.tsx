@@ -30,9 +30,9 @@ const sections: Section[] = [
   { title: "Revamp your home in style",            category: "home-decoration",    seeMore: rand() },
 ];
 
-async function getSectionProducts(category: string, limit = 4): Promise<SectionProduct[]> {
+async function getSectionProducts(category: string, limit = 4, offset = 0): Promise<SectionProduct[]> {
   const data = await apiFetch<{ products: SectionProduct[] }>(
-    `/api/products?category=${category}&limit=${limit}`,
+    `/api/products?category=${category}&limit=${limit}&offset=${offset}`,
     { next: { revalidate: 3600 } }
   );
   return data.products ?? [];

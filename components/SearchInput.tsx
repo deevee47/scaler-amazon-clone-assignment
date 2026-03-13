@@ -9,24 +9,27 @@ import CategoryListView from "./CategoryListView";
 
 const SearchInput = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [products, setProducts] = useState([]);
+  const [results, setResults] = useState<Product[]>([]);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
-  const [filteredProducts, setFilteredProducts] = useState([]);
-
+  // Debounced API search — fires 5s after user stops typing
   useEffect(() => {
-    const filtered = products.filter((item: Product) =>
-      item?.title.toLocaleLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-  }, [searchQuery, products]);
+    if (!searchQuery.trim()) {
+      setResults([]);
+      return;
+    }
 
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/products?limit=194`)
-      .then((r) => r.json())
-      .then((j) => setProducts(j.data?.products ?? []));
-  }, []);
+    const timer = setTimeout(() => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/products?search=${encodeURIComponent(searchQuery)}&limit=10&offset=0`
+      )
+        .then((r) => r.json())
+        .then((j) => setResults(j.data?.products ?? []));
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -60,7 +63,7 @@ const SearchInput = () => {
       />
       {searchQuery && (
         <MdOutlineClose
-          onClick={() => setSearchQuery("")}
+          onClick={() => { setSearchQuery(""); setResults([]); }}
           className="text-xl text-amazonLight hover:text-red-600 absolute right-14 duration-200 cursor-pointer"
         />
       )}
@@ -69,16 +72,13 @@ const SearchInput = () => {
       </span>
       {isInputFocused && searchQuery && (
         <div className="absolute left-0 top-12 w-full mx-auto h-auto max-h-96 bg-white rounded-md overflow-y-scroll cursor-pointer text-black">
-          {filteredProducts?.length > 0 ? (
+          {results.length > 0 ? (
             <div className="flex flex-col">
-              {filteredProducts?.map((item: Product) => (
+              {results.map((item: Product) => (
                 <Link
                   key={item?.id}
-                  href={{
-                    pathname: `/products/${item?.id}`,
-                    query: { id: item?.id },
-                  }}
-                  onClick={() => setSearchQuery("")}
+                  href={`/products/${item?.id}`}
+                  onClick={() => { setSearchQuery(""); setResults([]); }}
                   className="flex items-center gap-x-2 text-base font-medium hover:bg-lightText/30 px-3 py-1.5"
                 >
                   <CiSearch className="text-lg" /> {item?.title}
