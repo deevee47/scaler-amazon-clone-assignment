@@ -7,10 +7,7 @@ import { store, CartItem } from "@/lib/store";
 
 function FulfilledBadge() {
   return (
-    <span className="inline-flex items-center gap-1 bg-[#232F3E] text-white text-xs px-2 py-0.5 rounded">
-      <span className="text-[#FF9900] italic font-bold text-xs">a</span>
-      <span className="text-xs">Fulfilled</span>
-    </span>
+    <img className="w-16 object-cover" src="./banner/amazon-fulfilled.png" alt="Amazon Fulfilled"  />
   );
 }
 
@@ -63,34 +60,34 @@ function CartItemRow({ item }: { item: CartItem }) {
           {item.availabilityStatus ?? "In stock"}
         </p>
 
-        <p className="text-sm text-gray-700 mb-1">
-          FREE delivery <strong>Tue, 17 Mar</strong> available at checkout
+        <p className="text-sm text-black mb-1">
+          FREE delivery <span className="font-bold">Tue, 17 Mar</span> available at checkout
         </p>
 
         <div className="mb-1">
           <FulfilledBadge />
         </div>
 
-        <label className="flex items-center gap-1.5 text-sm text-gray-700 mb-1 cursor-pointer">
+        <label className="flex items-center gap-1.5 text-xs text-black mb-1 cursor-pointer">
           <input type="checkbox" className="w-3.5 h-3.5" />
           This will be a gift{" "}
-          <span className="text-[#007185] hover:text-[#C45500] hover:underline cursor-pointer">
+          <span className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline cursor-pointer">
             Learn more
           </span>
         </label>
 
         {item.brand && (
-          <p className="text-sm text-gray-700 mb-2">
+          <p className="text-sm text-black mb-2">
             <strong>Brand:</strong> {item.brand}
           </p>
         )}
 
         {/* Quantity pill + action links */}
-        <div className="flex items-center flex-wrap gap-x-2 gap-y-1 mt-2">
+        <div className="flex items-center flex-wrap gap-x-1.5 gap-y-1 mt-2">
           <div className="inline-flex items-center border-2 border-[#FFD814] rounded-full px-3 py-0.5 gap-3 bg-white">
             <button
               onClick={handleDecrement}
-              className="text-gray-700 hover:text-gray-900 text-base leading-none"
+              className="text-black hover:text-gray-900 text-base leading-none"
               aria-label="Decrease quantity or remove"
             >
               🗑
@@ -100,7 +97,7 @@ function CartItemRow({ item }: { item: CartItem }) {
             </span>
             <button
               onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-              className="text-gray-700 hover:text-gray-900 font-bold text-base leading-none"
+              className="text-black hover:text-gray-900 font-bold text-base leading-none"
               aria-label="Increase quantity"
             >
               +
@@ -110,20 +107,20 @@ function CartItemRow({ item }: { item: CartItem }) {
           <span className="text-gray-300 select-none">|</span>
           <button
             onClick={() => removeFromCart(item.productId)}
-            className="text-sm text-[#007185] hover:text-[#C45500] hover:underline"
+            className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline"
           >
             Delete
           </button>
           <span className="text-gray-300 select-none">|</span>
-          <button className="text-sm text-[#007185] hover:text-[#C45500] hover:underline">
+          <button className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline">
             Save for later
           </button>
           <span className="text-gray-300 select-none">|</span>
-          <span className="text-sm text-[#007185] hover:text-[#C45500] hover:underline cursor-pointer">
+          <span className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline cursor-pointer">
             See more like this
           </span>
           <span className="text-gray-300 select-none">|</span>
-          <span className="text-sm text-[#007185] hover:text-[#C45500] hover:underline cursor-pointer">
+          <span className="text-xs text-[#2261A1] hover:text-[#C45500] hover:underline cursor-pointer">
             Share
           </span>
         </div>
@@ -154,7 +151,7 @@ function CartItemRow({ item }: { item: CartItem }) {
               </p>
             )}
             <p className="text-xs text-gray-500 mt-0.5">Up to 5% back</p>
-            <p className="text-xs text-[#007185] cursor-pointer hover:underline">
+            <p className="text-xs text-[#2261A1] cursor-pointer hover:underline">
               Terms
             </p>
           </>
@@ -192,7 +189,7 @@ export default function CartPage() {
               <h1 className="text-2xl font-normal text-gray-900 mb-1">
                 Shopping Cart
               </h1>
-              <button className="text-sm text-[#007185] hover:text-[#C45500] hover:underline mb-3">
+              <button className="text-sm text-[#2261A1] hover:text-[#C45500] hover:underline mb-3">
                 Deselect all items
               </button>
             </div>
@@ -207,7 +204,7 @@ export default function CartPage() {
 
             {!cartLoading && cartItems.length === 0 && (
               <div className="px-5 py-10 text-center">
-                <p className="text-xl text-gray-700 mb-1">
+                <p className="text-xl text-black mb-1">
                   Your Amazon Cart is empty.
                 </p>
                 <p className="text-sm text-gray-500 mb-3">
@@ -215,7 +212,7 @@ export default function CartPage() {
                 </p>
                 <Link
                   href="/products"
-                  className="text-[#007185] hover:text-[#C45500] hover:underline text-sm"
+                  className="text-[#2261A1] hover:text-[#C45500] hover:underline text-sm"
                 >
                   Continue shopping
                 </Link>
@@ -248,7 +245,7 @@ export default function CartPage() {
               <button className="pb-2 border-b-2 border-[#232F3E] font-medium text-sm mr-6">
                 Saved for later
               </button>
-              <button className="pb-2 text-sm text-[#007185] hover:text-[#C45500]">
+              <button className="pb-2 text-sm text-[#2261A1] hover:text-[#C45500]">
                 Buy it again
               </button>
             </div>
@@ -261,17 +258,18 @@ export default function CartPage() {
           {/* Proceed to Buy card */}
           <div className="border border-[#D5D9D9] rounded p-4 bg-white">
             <div className="flex items-center gap-2 mb-2">
-              <div className="flex-1 h-1.5 bg-green-500 rounded-full" />
-              <span className="text-xs text-gray-500 whitespace-nowrap">
+              <div className="flex-1 h-3 bg-[#0C7B3C] rounded-full" />
+              <span className="text-sm text-black font-semibold whitespace-nowrap">
                 ₹499
               </span>
             </div>
-            <p className="text-sm text-gray-800 mb-1">
-              <span className="text-green-600 font-medium">✓</span> Your order
+            <p className="text-xs text-[#0C7B3C]  font-bold">
+              <span className="font-medium">✓</span> Your order
               is eligible for FREE Delivery.
             </p>
-            <p className="text-sm text-[#007185] mb-3">
-              Choose FREE Delivery option at checkout.
+            <p className="text-xs text-black  mb-3">
+              Choose <span className="underline text-[#2261A1]">FREE Delivery
+              </span>  option at checkout.
             </p>
 
             <p className="text-base font-bold text-gray-900 mb-2">
@@ -279,7 +277,7 @@ export default function CartPage() {
               <span>₹{subtotal.toLocaleString("en-IN")}</span>
             </p>
 
-            <label className="flex items-center gap-2 text-sm text-gray-700 mb-3 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-black mb-3 cursor-pointer">
               <input type="checkbox" className="w-4 h-4" />
               This order contains a gift
             </label>
@@ -293,11 +291,11 @@ export default function CartPage() {
           </div>
 
           {/* Prime promo card */}
-          <div className="bg-[#007EB9] rounded p-4 text-white">
-            <p className="text-sm font-semibold mb-1">
+          <div className="bg-[#0775FF] rounded p-4 text-white">
+            <p className="text-lg font-semibold">
               Enjoy faster deliveries, offers and so much more!
             </p>
-            <p className="text-xs mb-3 text-blue-100">
+            <p className="text-lg font-semibold mb-3">
               Join Prime now for FREE deliveries, cancel anytime!
             </p>
             <button className="w-full bg-[#FFD814] hover:bg-[#F7CA00] text-gray-900 font-medium text-sm px-4 py-2 rounded-full border border-[#FCD200]">
