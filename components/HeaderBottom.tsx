@@ -23,7 +23,7 @@ const HeaderBottom = () => {
 
   return (
     <div className="bg-[#242F3E] text-white">
-      <div className="flex items-center gap-0 py-[6px] pl-2 text-sm overflow-hidden">
+      <div className="flex items-center gap-0 py-[6px] pl-2 text-sm overflow-x-auto scrollbar-hide">
         {/* All button */}
         <button
           onClick={() => setIsSidebarOpen(true)}

@@ -56,7 +56,7 @@ function CartItemRow({
       />
 
       {/* Product image */}
-      <div className={`relative w-[250px] h-[170px] flex-shrink-0 bg-white transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
+      <div className={`relative w-[100px] h-[80px] sm:w-[180px] sm:h-[130px] md:w-[250px] md:h-[170px] flex-shrink-0 bg-white transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         <Image
           src={item.thumbnail}
           alt={item.title}
@@ -166,7 +166,7 @@ function CartItemRow({
       </div>
 
       {/* Price column */}
-      <div className={`w-[220px] flex-shrink-0 text-right transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
+      <div className={`w-[80px] sm:w-[140px] md:w-[220px] flex-shrink-0 text-right transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         {item.discountPercentage && item.discountPercentage > 0 ? (
           <>
             <p className="text-[#CC0C39] text-xs font-bold mb-0.5">
@@ -295,7 +295,7 @@ export default function CartPage() {
 
   return (
     <div className="bg-[#EAEDED] min-h-screen py-4">
-      <div className="w-full px-6 flex gap-4 items-start">
+      <div className="w-full px-3 sm:px-6 flex flex-col lg:flex-row gap-4 lg:items-start">
         {/* Left column */}
         <div className="flex-1 min-w-0">
           {/* Cart white card */}
@@ -378,7 +378,7 @@ export default function CartPage() {
             {wishlistItems.length === 0 ? (
               <p className="text-sm text-gray-500">No saved items.</p>
             ) : (
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {wishlistItems.map((item) => (
                   <SavedItemCard key={item.productId} item={item} />
                 ))}
@@ -388,7 +388,7 @@ export default function CartPage() {
         </div>
 
         {/* Right sidebar */}
-        <div className="w-[320px] flex-shrink-0 flex flex-col gap-4">
+        <div className="w-full lg:w-[320px] lg:flex-shrink-0 flex flex-col gap-4">
           {/* Proceed to Buy card */}
           <div className="border border-[#D5D9D9] rounded p-4 bg-white">
             <div className="flex items-center gap-2 mb-2">

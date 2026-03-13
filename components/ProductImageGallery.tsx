@@ -18,7 +18,7 @@ export default function ProductImageGallery({
   const extraCount = images.length - maxThumbs;
 
   return (
-    <div className="flex gap-2 flex-shrink-0">
+    <div className="flex gap-2 w-full">
       {/* Thumbnail strip */}
       <div className="flex flex-col gap-2 w-[55px]">
         {visibleThumbs.map((src, i) => (
@@ -66,7 +66,7 @@ export default function ProductImageGallery({
       </div>
 
       {/* Main image area */}
-      <div className="w-[580px] flex-shrink-0 flex flex-col relative">
+      <div className="flex-1 min-w-0 flex flex-col relative">
         {/* Share icon — top right of image area */}
         <div className="absolute top-0 right-0 z-10">
           <button
@@ -95,7 +95,7 @@ export default function ProductImageGallery({
         </div>
 
         {/* Image */}
-        <div className="relative flex-1 min-h-[520px]">
+        <div className="relative flex-1 min-h-[220px] sm:min-h-[380px] lg:min-h-[520px]">
           <Image
             src={images[selectedIndex]}
             alt={title}

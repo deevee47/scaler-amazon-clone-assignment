@@ -2,6 +2,15 @@
 
 I built a full-stack Amazon-like e-commerce application using **Next.js 16**, **TypeScript**, **Tailwind CSS v4**, and **PostgreSQL** (via Neon + Drizzle ORM) as part of the Scaler SDE Intern assignment.
 
+
+NOTE: all bonus points assignment tasks are also completed. 
+* Order Confirmation Mail
+* Wishlist 
+* Responsive design (mobile, tablet, desktop)
+* Wishlist functionality
+* Email notification on order placement
+* Order History
+
 ---
 
 ## Getting Started

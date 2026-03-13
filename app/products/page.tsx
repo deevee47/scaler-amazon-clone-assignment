@@ -64,9 +64,28 @@ export default async function ProductsPage({
   }
 
   return (
-    <div className="flex min-h-screen bg-white">
-      {/* Sidebar */}
-      <aside className="w-56 flex-shrink-0 px-4 py-6 border-r border-gray-200">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white">
+      {/* Mobile category filter */}
+      <div className="md:hidden px-4 py-3 border-b border-gray-200 bg-white overflow-x-auto flex gap-2 flex-nowrap">
+        <Link
+          href="/products"
+          className={`text-sm px-3 py-1.5 rounded-full whitespace-nowrap border flex-shrink-0 ${!category ? "bg-[#232F3E] text-white border-[#232F3E]" : "border-gray-300 text-gray-700 hover:border-gray-500"}`}
+        >
+          All
+        </Link>
+        {categories.map((cat) => (
+          <Link
+            key={cat}
+            href={`/products?category=${encodeURIComponent(cat)}`}
+            className={`text-sm px-3 py-1.5 rounded-full whitespace-nowrap border flex-shrink-0 capitalize ${category === cat ? "bg-[#232F3E] text-white border-[#232F3E]" : "border-gray-300 text-gray-700 hover:border-gray-500"}`}
+          >
+            {cat.replace(/-/g, " ")}
+          </Link>
+        ))}
+      </div>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:block w-56 flex-shrink-0 px-4 py-6 border-r border-gray-200">
         <h2 className="text-base font-bold text-gray-900 mb-3">Department</h2>
         <ul className="flex flex-col gap-1">
           <li>

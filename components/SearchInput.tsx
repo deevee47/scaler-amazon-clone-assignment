@@ -75,11 +75,13 @@ const SearchInput = () => {
   return (
     <div
       ref={searchContainerRef}
-      className="flex-1 h-10 mx-4 hidden md:inline-flex items-center justify-between relative"
+      className="flex-1 h-10 mx-2 sm:mx-4 inline-flex items-center justify-between relative"
     >
-      <CategoryListView />
+      <div className="hidden sm:block h-full">
+        <CategoryListView />
+      </div>
       <input
-        className="w-full h-full bg-white rounded-tr-md rounded-br-md px-2 placeholder:text-md text-base text-black placeholder:text-black/70 border-[3px] border-transparent outline-none focus-visible:border-amazonOrange"
+        className="w-full h-full bg-white rounded-tl-md rounded-bl-md sm:rounded-tl-none sm:rounded-bl-none rounded-tr-md rounded-br-md px-2 placeholder:text-md text-base text-black placeholder:text-black/70 border-[3px] border-transparent outline-none focus-visible:border-amazonOrange"
         type="text"
         onChange={(e) => setSearchQuery(e.target.value)}
         value={searchQuery}

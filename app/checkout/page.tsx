@@ -104,7 +104,7 @@ export default function CheckoutPage() {
       )}
 
       <div className="bg-[#EAEDED] min-h-screen">
-        <div className="max-w-[1200px] mx-auto px-4 py-6 flex gap-6 items-start">
+        <div className="max-w-[1200px] mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6 lg:items-start">
 
           {/* Left column */}
           <div className="flex-1 min-w-0 flex flex-col gap-0">

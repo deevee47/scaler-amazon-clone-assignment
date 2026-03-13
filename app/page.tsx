@@ -43,8 +43,8 @@ export default function Home() {
           <CarouselNext />
         </Carousel>
 
-        {/* Products overlay — pulled up significantly over the banner */}
-        <div className="relative z-10 -mt-80 px-6">
+        {/* Products overlay — pulled up over the banner */}
+        <div className="relative z-10 -mt-4 sm:-mt-20 md:-mt-40 lg:-mt-80 px-3 sm:px-6">
           <ProductsList />
         </div>
         <SponsoredBanner />

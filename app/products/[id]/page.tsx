@@ -135,7 +135,7 @@ export default async function ProductDetailPage({
   return (
     <div className="bg-white min-h-screen">
       {/* Breadcrumb */}
-      <div className="text-xs text-gray-500 px-6 py-1.5 border-b border-gray-200">
+      <div className="text-xs text-gray-500 px-3 lg:px-6 py-1.5 border-b border-gray-200">
         <span className="hover:text-[#c45500] cursor-pointer">
           {categoryLabel}
         </span>
@@ -144,13 +144,13 @@ export default async function ProductDetailPage({
       </div>
 
       {/* Main layout */}
-      <div className="flex gap-5 px-6 py-4 items-start">
-        {/* Gallery — sticky */}
-        <div className="sticky top-[60px] self-start flex-shrink-0">
+      <div className="flex flex-col lg:flex-row gap-5 px-3 lg:px-6 py-4 lg:items-start">
+        {/* Gallery */}
+        <div className="lg:sticky lg:top-[60px] lg:self-start lg:flex-shrink-0 w-full lg:w-[640px]">
           <ProductImageGallery images={product.images} title={product.title} />
 
           {/* Ask Rufus */}
-          <div className="mt-4 w-[640px]">
+          <div className="mt-4 w-full">
             <div className="flex items-center gap-1.5 mb-2">
               <span className="text-sm font-semibold text-gray-800">Ask Rufus</span>
             </div>
@@ -369,8 +369,8 @@ export default async function ProductDetailPage({
           </div>
         </div>
 
-        {/* Buy box — sticky */}
-        <div className="sticky top-[60px] self-start w-[255px] flex-shrink-0 flex flex-col gap-2.5">
+        {/* Buy box */}
+        <div className="lg:sticky lg:top-[60px] lg:self-start w-full lg:w-[255px] flex-shrink-0 flex flex-col gap-2.5">
 
           {/* Prime card — separate light-blue card */}
           <div className="border border-[#C8E6F5] rounded-xl bg-[#EBF5FB] px-4 py-4">
@@ -499,12 +499,14 @@ export default async function ProductDetailPage({
         </div>
 
         {/* Cart sidebar — 4th column, only visible when cart has items */}
-        <CartSidebar />
+        <div className="hidden lg:block">
+          <CartSidebar />
+        </div>
       </div>
 
       {/* Related products carousel */}
       {relatedProducts.length > 0 && (
-        <div className="pl-6 pr-[154px] py-6 border-t border-gray-200">
+        <div className="px-3 lg:pl-6 lg:pr-[154px] py-6 border-t border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">
               Relevant items customers are likely to buy

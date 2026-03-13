@@ -18,7 +18,7 @@ export default function OrderSummary({
   onPlaceOrder: () => void;
 }) {
   return (
-    <div className="w-[300px] flex-shrink-0 bg-white border border-[#D5D9D9] rounded p-4">
+    <div className="w-full lg:w-[300px] lg:flex-shrink-0 bg-white border border-[#D5D9D9] rounded p-4">
 
       <button
         onClick={onPlaceOrder}
