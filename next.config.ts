@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.dummyjson.com",
       },
+      {
+        protocol: "https",
+        hostname: "images.dummyjson.com",
+      },
+      {
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+      },
     ],
   },
 };

@@ -1,60 +1,87 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Product } from "@/type";
+import HorizontalProductRow from "@/components/HorizontalProductRow";
+import BestSellersRow from "@/components/BestSellersRow";
 
-async function getProducts(): Promise<Product[]> {
-  const res = await fetch("https://dummyjson.com/products?limit=20", {
-    next: { revalidate: 3600 },
-  });
+interface SectionProduct {
+  id: number;
+  title: string;
+  thumbnail: string;
+}
+
+interface Section {
+  title: string;
+  category: string;
+  seeMore: string;
+}
+
+const seeMoreLabels = ["See more", "More in Buy Again", "See more deals", "See more offers", "Explore all"];
+const rand = () => seeMoreLabels[Math.floor(Math.random() * seeMoreLabels.length)];
+
+const sections: Section[] = [
+  { title: "Pick up where you left off",          category: "smartphones",        seeMore: rand() },
+  { title: "Continue shopping deals",              category: "laptops",            seeMore: rand() },
+  { title: "Keep shopping for",                    category: "beauty",             seeMore: rand() },
+  { title: "Get great deals on Electronics",       category: "mobile-accessories", seeMore: rand() },
+  { title: "Buy again",                            category: "fragrances",         seeMore: rand() },
+  { title: "Deals related to items you've saved",  category: "furniture",          seeMore: rand() },
+  { title: "Up to 60% off | Footwear",             category: "mens-shoes",         seeMore: rand() },
+  { title: "Revamp your home in style",            category: "home-decoration",    seeMore: rand() },
+];
+
+async function getSectionProducts(category: string, limit = 4): Promise<SectionProduct[]> {
+  const res = await fetch(
+    `https://dummyjson.com/products/category/${category}?limit=${limit}&select=id,title,thumbnail`,
+    { next: { revalidate: 3600 } }
+  );
   const data = await res.json();
-  return data.products;
+  return data.products ?? [];
 }
 
 const ProductsList = async () => {
-  const products = await getProducts();
+  const [allProducts, rowProducts, bestSellersProducts] = await Promise.all([
+    Promise.all(sections.map((s) => getSectionProducts(s.category))),
+    getSectionProducts("laptops", 10),
+    getSectionProducts("mobile-accessories", 10),
+  ]);
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      {products.map((product) => (
-        <Link
-          key={product.id}
-          href={`/products/${product.id}`}
-          className="bg-white! border border-gray-200 rounded-md p-3 flex flex-col gap-2 hover:shadow-md transition-shadow duration-200 group"
-        >
-          <div className="relative w-full aspect-square overflow-hidden rounded-sm bg-gray-50">
-            <Image
-              src={product.thumbnail}
-              alt={product.title}
-              fill
-              className="object-contain group-hover:scale-105 transition-transform duration-200"
-              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-            />
-          </div>
-          <div className="flex flex-col gap-1 flex-1">
-            <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">
-              {product.title}
-            </p>
-            <div className="flex items-center gap-1">
-              <span className="text-amazonOrange text-xs">
-                {"★".repeat(Math.round(product.rating))}
-                {"☆".repeat(5 - Math.round(product.rating))}
-              </span>
-              <span className="text-xs text-gray-500">({product.rating})</span>
+    <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      {sections.map((section, i) => {
+        const products = allProducts[i].slice(0, 4);
+        return (
+          <div key={section.category} className="bg-white! p-4 flex flex-col gap-3">
+            <h2 className="text-xl font-bold text-gray-900">{section.title}</h2>
+            <div className="grid grid-cols-2 gap-2 flex-1">
+              {products.map((p) => (
+                <Link key={p.id} href={`/products/${p.id}`}>
+                  <div className="aspect-square relative bg-gray-50">
+                    <Image
+                      src={p.thumbnail}
+                      alt={p.title}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 40vw, (max-width: 1024px) 20vw, 12vw"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-600 truncate mt-1">{p.title}</p>
+                </Link>
+              ))}
             </div>
-            <div className="flex items-center gap-2 mt-auto">
-              <span className="text-base font-bold text-gray-900">
-                ${product.price.toFixed(2)}
-              </span>
-              {product.discountPercentage > 0 && (
-                <span className="text-xs text-amazonOrange font-medium">
-                  -{Math.round(product.discountPercentage)}%
-                </span>
-              )}
-            </div>
+            <Link
+              href={`/products?category=${section.category}`}
+              className="text-sm text-[#007185] hover:text-[#c45500] hover:underline mt-auto"
+            >
+              {section.seeMore}
+            </Link>
           </div>
-        </Link>
-      ))}
+        );
+      })}
     </div>
+    <HorizontalProductRow title="Top picks in Laptops" products={rowProducts} />
+    <BestSellersRow title="Best Sellers in Computers & Accessories" products={bestSellersProducts} />
+    </>
   );
 };
 

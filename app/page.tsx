@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import ProductsList from "@/components/ProductsList";
 import Image from "next/image";
+import SponsoredBanner from "@/components/SponsoredBanner";
 
 const bannerImages = [
   { title: "bannerOne", src: "/banner/bannerOne.jpg" },
@@ -18,7 +19,7 @@ const bannerImages = [
 
 export default function Home() {
   return (
-    <div>
+    <div className="bg-[#E4E6E6]">
       {/* Banner carousel with overlapping products below */}
       <div className="relative">
         <Carousel opts={{ loop: true }} autoPlay autoPlayDelay={10000}>
@@ -41,9 +42,11 @@ export default function Home() {
         </Carousel>
 
         {/* Products overlay — pulled up significantly over the banner */}
-        <div className="relative z-10 -mt-80 px-6 pb-10">
+        <div className="relative z-10 -mt-80 px-6">
           <ProductsList />
         </div>
+        <SponsoredBanner />
+            
       </div>
     </div>
   );
