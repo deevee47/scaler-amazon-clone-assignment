@@ -14,6 +14,20 @@ export interface CartItem {
   discountPercentage?: number;
 }
 
+interface RawCartItem {
+  id: number;
+  sessionId: string;
+  quantity: number;
+  product: {
+    id: number;
+    title: string;
+    price: string;
+    thumbnail: string;
+    stock: number;
+    discountPercentage: string;
+  };
+}
+
 interface StoreType {
   cartItems: CartItem[];
   cartLoading: boolean;
@@ -42,7 +56,18 @@ export const store = create<StoreType>()((set) => ({
         headers: sessionHeaders(),
       });
       const json = await res.json();
-      set({ cartItems: json.data ?? [] });
+      const rawItems: RawCartItem[] = json.data ?? [];
+      const mapped: CartItem[] = rawItems.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        title: item.product.title,
+        price: item.product.price,
+        thumbnail: item.product.thumbnail,
+        discountPercentage: parseFloat(item.product.discountPercentage),
+        availabilityStatus: item.product.stock > 0 ? "In Stock" : "Out of Stock",
+        brand: null,
+      }));
+      set({ cartItems: mapped });
     } finally {
       set({ cartLoading: false });
     }
@@ -62,24 +87,30 @@ export const store = create<StoreType>()((set) => ({
       await store.getState().removeFromCart(productId);
       return;
     }
+    set((state) => ({
+      cartItems: state.cartItems.map((item) =>
+        item.productId === productId ? { ...item, quantity } : item
+      ),
+    }));
     await fetch(`${BASE_URL}/api/cart/${productId}`, {
       method: "PATCH",
       headers: sessionHeaders(),
       body: JSON.stringify({ quantity }),
     });
-    await store.getState().fetchCart();
   },
 
   removeFromCart: async (productId: number) => {
+    set((state) => ({
+      cartItems: state.cartItems.filter((item) => item.productId !== productId),
+    }));
     await fetch(`${BASE_URL}/api/cart/${productId}`, {
       method: "DELETE",
       headers: sessionHeaders(),
     });
-    await store.getState().fetchCart();
   },
 
   clearCart: async () => {
-    await fetch(`${BASE_URL}/api/cart`, {
+    await fetch(`${BASE_URL}/api/cart/clear`, {
       method: "DELETE",
       headers: sessionHeaders(),
     });

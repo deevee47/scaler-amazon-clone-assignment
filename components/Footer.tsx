@@ -1,3 +1,4 @@
+"use client";
 import { footerData } from "@/constants/data";
 import Container from "./Container";
 import FooterMiddleList from "./FooterMiddleList";
@@ -39,7 +40,10 @@ const Footer = () => {
   return (
     <div className="text-lightText">
       {/* Back to top */}
-      <div className="bg-[#37475B] text-center py-3 cursor-pointer hover:bg-[#485769] transition-colors duration-200">
+      <div
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className="bg-[#37475B] text-center py-3 cursor-pointer hover:bg-[#485769] transition-colors duration-200"
+      >
         <span className="text-sm text-white">Back to top</span>
       </div>
 

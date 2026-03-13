@@ -49,7 +49,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
           );
         })}
       </div>
-      <span className="text-sm text-[#007185] hover:text-[#c45500] cursor-pointer">
+      <span className="text-sm text-[#2261A1] hover:text-[#c45500] cursor-pointer">
         ({count.toLocaleString()})
       </span>
     </div>
@@ -84,25 +84,30 @@ export default async function ProductDetailPage({
   const discountPct = Math.round(discountPercentage);
   const ratingCount = Math.round(rating * 100) || 349;
 
+  const DEAL_LABELS = ["Selling Fast", "Best Value", "Limited Time Deal", "Top Pick", "Hot Deal"];
+  const dealLabel = DEAL_LABELS[product.id % DEAL_LABELS.length];
+
+  const deliveryDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+    .toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" });
+
+  const categoryLabel = product.category
+    .replace(/-/g, " ")
+    .split(" ")
+    .map((w) => w[0].toUpperCase() + w.slice(1))
+    .join(" ");
+  const titleTruncated = product.title.length > 40
+    ? product.title.slice(0, 40) + "…"
+    : product.title;
+
   return (
     <div className="bg-white min-h-screen">
       {/* Breadcrumb */}
       <div className="text-xs text-gray-500 px-6 py-1.5 border-b border-gray-200">
         <span className="hover:text-[#c45500] cursor-pointer">
-          Computers &amp; Accessories
+          {categoryLabel}
         </span>
         {" › "}
-        <span className="hover:text-[#c45500] cursor-pointer">
-          Accessories &amp; Peripherals
-        </span>
-        {" › "}
-        <span className="hover:text-[#c45500] cursor-pointer">
-          Keyboards, Mice &amp; Input Devices
-        </span>
-        {" › "}
-        <span className="hover:text-[#c45500] cursor-pointer">
-          Keyboard &amp; Mouse Sets
-        </span>
+        <span className="text-gray-700">{titleTruncated}</span>
       </div>
 
       {/* Main layout */}
@@ -119,7 +124,7 @@ export default async function ProductDetailPage({
 
           {/* Brand store link */}
           {product.brand && (
-            <p className="text-sm text-[#007185] hover:text-[#c45500] hover:underline cursor-pointer mb-2">
+            <p className="text-sm text-[#2261A1] hover:text-[#c45500] hover:underline cursor-pointer mb-2">
               Visit the {product.brand} Store
             </p>
           )}
@@ -128,22 +133,17 @@ export default async function ProductDetailPage({
           <div className="flex items-center gap-2 flex-wrap mb-1">
             <StarRating rating={rating} count={ratingCount} />
             <span className="text-gray-300 text-sm">|</span>
-            <span className="text-sm text-[#007185] hover:text-[#c45500] cursor-pointer hover:underline">
+            <span className="text-sm text-[#2261A1] hover:text-[#c45500] cursor-pointer hover:underline">
               Search this page
             </span>
           </div>
 
-          {/* Bought count */}
-          <p className="text-sm text-gray-600 mb-3">
-            <span className="font-bold">500+</span> bought in past month
-          </p>
-
           <hr className="my-3 border-gray-200" />
 
-          {/* Limited time deal badge */}
+          {/* Deal badge */}
           <div className="mb-2">
             <span className="inline-flex bg-[#CC0C39] text-white text-sm font-semibold px-3 py-1 rounded">
-              Limited time deal
+              {dealLabel}
             </span>
           </div>
 
@@ -165,7 +165,7 @@ export default async function ProductDetailPage({
               ₹{mrp.toLocaleString("en-IN")}
             </span>
             {"  "}
-            <span className="text-[#007185] hover:underline cursor-pointer">
+            <span className="text-[#2261A1] hover:underline cursor-pointer">
               Price history
             </span>
           </div>
@@ -178,16 +178,6 @@ export default async function ProductDetailPage({
           {/* Tax */}
           <p className="text-xs text-gray-500 mb-2">Inclusive of all taxes</p>
 
-          {/* Amazon Business */}
-          <p className="text-sm text-gray-700 mb-4">
-            With <span className="font-bold">Amazon Business</span>, you would
-            have <span className="font-bold">saved ₹2,522.25</span> in the last
-            year.{" "}
-            <span className="text-[#007185] hover:underline cursor-pointer">
-              Create a free account
-            </span>{" "}
-            and <span className="font-bold">save up to 15%</span> today.
-          </p>
 
           {/* Offers */}
           <div className="mb-4">
@@ -218,7 +208,7 @@ export default async function ProductDetailPage({
                     Amazon Pay UPI
                   </p>
                 </div>
-                <p className="text-xs text-[#007185] hover:underline cursor-pointer mt-2">
+                <p className="text-xs text-[#2261A1] hover:underline cursor-pointer mt-2">
                   2 offers &gt;
                 </p>
               </div>
@@ -233,7 +223,7 @@ export default async function ProductDetailPage({
                     Get GST invoice and save up to 18% on business purchases
                   </p>
                 </div>
-                <p className="text-xs text-[#007185] hover:underline cursor-pointer mt-2">
+                <p className="text-xs text-[#2261A1] hover:underline cursor-pointer mt-2">
                   1 offer &gt;
                 </p>
               </div>
@@ -377,7 +367,7 @@ export default async function ProductDetailPage({
               </span>
               , Prime offers everyday and more
             </p>
-            <p className="text-xs text-[#007185] hover:underline cursor-pointer font-semibold">
+            <p className="text-xs text-[#2261A1] hover:underline cursor-pointer font-semibold">
               Join Prime Shopping Edition &gt;&gt;
             </p>
           </div>
@@ -397,8 +387,8 @@ export default async function ProductDetailPage({
             {/* Free delivery */}
             <p className="text-sm text-gray-700">
               FREE delivery{" "}
-              <span className="font-bold">Tuesday, 17 March.</span>{" "}
-              <span className="text-[#007185] hover:underline cursor-pointer">
+              <span className="font-bold">{deliveryDate}.</span>{" "}
+              <span className="text-[#2261A1] hover:underline cursor-pointer">
                 Details
               </span>
             </p>
@@ -412,16 +402,15 @@ export default async function ProductDetailPage({
               >
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
               </svg>
-              <span className="text-[#007185] hover:underline">
-                Deliver to Divyansh - Satna 485001
+              <span className="text-[#2261A1] hover:underline">
+                Select delivery location
               </span>
             </div>
 
             {/* Stock */}
             <p
-              className={`text-lg font-medium ${
-                product.stock > 0 ? "text-[#007600]" : "text-red-600"
-              }`}
+              className={`text-lg font-medium ${product.stock > 0 ? "text-[#007600]" : "text-red-600"
+                }`}
             >
               {product.stock > 0 ? "In stock" : "Out of stock"}
             </p>
@@ -429,23 +418,23 @@ export default async function ProductDetailPage({
             {/* Ships from / Sold by table */}
             <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-sm">
               <span className="text-gray-500">Ships from</span>
-              <span className="text-gray-800">Amazon</span>
+              <span className="text-gray-800">{product.brand || "Amazon"}</span>
               <span className="text-gray-500">Sold by</span>
-              <span className="text-[#007185] hover:underline cursor-pointer">
+              <span className="text-[#2261A1] hover:underline cursor-pointer">
                 {product.brand || "Amazon"}
               </span>
               <span className="text-gray-500">Gift options</span>
-              <span className="text-[#007185] hover:underline cursor-pointer">
+              <span className="text-[#2261A1] hover:underline cursor-pointer">
                 Available at checkout
               </span>
               <span className="text-gray-500">Payment</span>
-              <span className="text-[#007185] hover:underline cursor-pointer">
+              <span className="text-[#2261A1] hover:underline cursor-pointer">
                 Secure transaction
               </span>
             </div>
 
             {/* See more */}
-            <button className="flex items-center gap-0.5 text-sm text-[#007185] hover:underline w-fit">
+            <button className="flex items-center gap-0.5 text-sm text-[#2261A1] hover:underline w-fit">
               <svg
                 className="w-3.5 h-3.5"
                 viewBox="0 0 24 24"
@@ -457,32 +446,6 @@ export default async function ProductDetailPage({
               </svg>
               See more
             </button>
-
-            <hr className="border-gray-200" />
-
-            {/* Protection plan */}
-            <div>
-              <p className="text-sm font-bold text-gray-800 mb-1.5">
-                Add a Protection Plan:
-              </p>
-              <div className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  id="warranty"
-                  className="mt-0.5 flex-shrink-0"
-                />
-                <label
-                  htmlFor="warranty"
-                  className="cursor-pointer text-sm leading-snug"
-                >
-                  <span className="text-[#007185] hover:underline">
-                    Extended Warranty
-                  </span>{" "}
-                  for{" "}
-                  <span className="text-[#B12704] font-medium">₹98.00</span>
-                </label>
-              </div>
-            </div>
 
             <hr className="border-gray-200" />
 

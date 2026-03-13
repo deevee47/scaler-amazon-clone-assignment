@@ -25,11 +25,10 @@ export default function ProductImageGallery({
           <button
             key={i}
             onClick={() => setSelectedIndex(i)}
-            className={`relative w-[55px] h-[55px] border rounded flex-shrink-0 overflow-hidden ${
-              selectedIndex === i
+            className={`relative w-[55px] h-[55px] border rounded flex-shrink-0 overflow-hidden ${selectedIndex === i
                 ? "border-[#c45500] border-2"
                 : "border-gray-300 hover:border-[#c45500]"
-            }`}
+              }`}
           >
             {i === 1 && (
               <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center z-10 gap-0.5">
@@ -99,7 +98,7 @@ export default function ProductImageGallery({
 
         {/* Full view link */}
         <div className="text-center py-2 border-t border-gray-100">
-          <span className="text-sm text-[#007185] hover:text-[#c45500] cursor-pointer hover:underline">
+          <span className="text-sm text-[#2261A1] hover:text-[#c45500] cursor-pointer hover:underline">
             Click to see full view
           </span>
         </div>

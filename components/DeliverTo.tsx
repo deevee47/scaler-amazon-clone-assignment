@@ -2,14 +2,26 @@
 import { useEffect, useState } from "react";
 import { SlLocationPin } from "react-icons/sl";
 
+async function fetchCityFromIP(): Promise<string | null> {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    return data?.city ?? data?.region ?? null;
+  } catch {
+    return null;
+  }
+}
+
 const DeliverTo = () => {
   const [city, setCity] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      fetchCityFromIP().then((c) => { setCity(c); setLoading(false); });
+      return;
+    }
 
-    setLoading(true);
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
@@ -20,7 +32,7 @@ const DeliverTo = () => {
           );
           const data = await res.json();
           const addr = data?.address;
-          const city =
+          const resolved =
             addr?.city ||
             addr?.town ||
             addr?.village ||
@@ -28,14 +40,27 @@ const DeliverTo = () => {
             addr?.county ||
             addr?.suburb ||
             addr?.state_district;
-          setCity(city ?? null);
+          if (resolved) {
+            setCity(resolved);
+            setLoading(false);
+          } else {
+            const ipCity = await fetchCityFromIP();
+            setCity(ipCity);
+            setLoading(false);
+          }
         } catch {
-          setCity(null);
-        } finally {
+          const ipCity = await fetchCityFromIP();
+          setCity(ipCity);
           setLoading(false);
         }
       },
-      () => setLoading(false)
+      async () => {
+        // Permission denied — fall back to IP geolocation
+        const ipCity = await fetchCityFromIP();
+        setCity(ipCity);
+        setLoading(false);
+      },
+      { timeout: 5000 }
     );
   }, []);
 

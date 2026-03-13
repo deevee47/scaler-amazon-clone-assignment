@@ -72,7 +72,7 @@ export default async function ProductsPage({
           <li>
             <Link
               href="/products"
-              className={`text-sm px-2 py-1 block rounded ${!category ? "font-bold text-[#232F3E]" : "text-[#007185] hover:text-[#c45500]"}`}
+              className={`text-sm px-2 py-1 block rounded ${!category ? "font-bold text-[#232F3E]" : "text-[#2261A1] hover:text-[#c45500]"}`}
             >
               All Categories
             </Link>
@@ -81,7 +81,7 @@ export default async function ProductsPage({
             <li key={cat}>
               <Link
                 href={`/products?category=${encodeURIComponent(cat)}`}
-                className={`text-sm px-2 py-1 block rounded capitalize ${category === cat ? "font-bold text-[#232F3E]" : "text-[#007185] hover:text-[#c45500]"}`}
+                className={`text-sm px-2 py-1 block rounded capitalize ${category === cat ? "font-bold text-[#232F3E]" : "text-[#2261A1] hover:text-[#c45500]"}`}
               >
                 {cat.replace(/-/g, " ")}
               </Link>
@@ -140,7 +140,7 @@ export default async function ProductsPage({
             {currentPage > 1 && (
               <Link
                 href={pageLink(currentPage - 1)}
-                className="px-4 py-2 border border-gray-300 rounded text-sm text-[#007185] hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded text-sm text-[#2261A1] hover:bg-gray-50"
               >
                 ← Previous
               </Link>
@@ -151,7 +151,7 @@ export default async function ProductsPage({
             {currentPage < totalPages && (
               <Link
                 href={pageLink(currentPage + 1)}
-                className="px-4 py-2 border border-gray-300 rounded text-sm text-[#007185] hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded text-sm text-[#2261A1] hover:bg-gray-50"
               >
                 Next →
               </Link>

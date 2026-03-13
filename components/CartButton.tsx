@@ -6,6 +6,7 @@ import { store } from "@/lib/store";
 
 const CartButton = () => {
   const { cartItems, fetchCart } = store();
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     fetchCart();
@@ -25,7 +26,7 @@ const CartButton = () => {
           className="w-auto object-cover h-8"
         />
         <p className="absolute top-0 left-[58%] -translate-x-[52%] text-amazonOrangeDark text-md font-bold leading-none">
-          {cartItems.length}
+          {totalItems}
         </p>
       </div>
       <p className="text-md text-white font-bold mt-3">Cart</p>

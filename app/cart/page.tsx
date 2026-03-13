@@ -2,21 +2,36 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { store, CartItem } from "@/lib/store";
 
 function FulfilledBadge() {
   return (
-    <img className="w-16 object-cover" src="./banner/amazon-fulfilled.png" alt="Amazon Fulfilled"  />
+    <img className="w-16 object-cover" src="./banner/amazon-fulfilled.png" alt="Amazon Fulfilled" />
   );
 }
 
-function CartItemRow({ item }: { item: CartItem }) {
+const DEAL_LABELS = ["Selling Fast", "Best Value", "Limited Time Deal", "Top Pick", "Hot Deal"];
+
+function dealLabel(productId: number) {
+  return DEAL_LABELS[productId % DEAL_LABELS.length];
+}
+
+function CartItemRow({
+  item,
+  isSelected,
+  onToggle,
+}: {
+  item: CartItem;
+  isSelected: boolean;
+  onToggle: () => void;
+}) {
   const { updateQuantity, removeFromCart } = store();
-  const price = parseFloat(item.price);
+  const unitPrice = parseFloat(item.price);
+  const price = unitPrice * item.quantity;
   const mrp =
     item.discountPercentage && item.discountPercentage > 0
-      ? Math.round(price / (1 - item.discountPercentage / 100))
+      ? Math.round(unitPrice / (1 - item.discountPercentage / 100)) * item.quantity
       : null;
 
   function handleDecrement() {
@@ -32,12 +47,13 @@ function CartItemRow({ item }: { item: CartItem }) {
       {/* Checkbox */}
       <input
         type="checkbox"
-        defaultChecked
-        className="mt-1 w-4 h-4 accent-[#007EB9] flex-shrink-0"
+        checked={isSelected}
+        onChange={onToggle}
+        className="mt-1 w-4 h-4 accent-[#007EB9] flex-shrink-0 cursor-pointer"
       />
 
       {/* Product image */}
-      <div className="relative w-[130px] h-[100px] flex-shrink-0 bg-white">
+      <div className={`relative w-[130px] h-[100px] flex-shrink-0 bg-white transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         <Image
           src={item.thumbnail}
           alt={item.title}
@@ -48,7 +64,7 @@ function CartItemRow({ item }: { item: CartItem }) {
       </div>
 
       {/* Product info */}
-      <div className="flex-1 min-w-0">
+      <div className={`flex-1 min-w-0 transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         <Link
           href={`/products/${item.productId}`}
           className="text-sm text-gray-900 leading-snug line-clamp-2 mb-1 hover:text-[#C45500] hover:underline block"
@@ -61,7 +77,15 @@ function CartItemRow({ item }: { item: CartItem }) {
         </p>
 
         <p className="text-sm text-black mb-1">
-          FREE delivery <span className="font-bold">Tue, 17 Mar</span> available at checkout
+          FREE delivery{" "}
+          <span className="font-bold">
+            {new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString("en-IN", {
+              weekday: "short",
+              day: "numeric",
+              month: "short",
+            })}
+          </span>{" "}
+          available at checkout
         </p>
 
         <div className="mb-1">
@@ -90,9 +114,9 @@ function CartItemRow({ item }: { item: CartItem }) {
               className="text-black hover:text-gray-900 text-base leading-none"
               aria-label="Decrease quantity or remove"
             >
-              🗑
+              −
             </button>
-            <span className="text-sm font-medium min-w-[1ch] text-center">
+            <span className="text-sm text-black font-medium min-w-[1ch] text-center">
               {item.quantity}
             </span>
             <button
@@ -127,11 +151,11 @@ function CartItemRow({ item }: { item: CartItem }) {
       </div>
 
       {/* Price column */}
-      <div className="w-[180px] flex-shrink-0 text-right">
+      <div className={`w-[180px] flex-shrink-0 text-right transition-opacity ${!isSelected ? "opacity-40" : ""}`}>
         {item.discountPercentage && item.discountPercentage > 0 ? (
           <>
             <p className="text-[#CC0C39] text-sm font-medium mb-0.5">
-              Limited time deal
+              {dealLabel(item.productId)}
             </p>
             <div className="flex items-center justify-end gap-1.5 mb-0.5">
               <span className="bg-[#CC0C39] text-white text-xs font-bold px-1.5 py-0.5 rounded-sm">
@@ -167,16 +191,42 @@ function CartItemRow({ item }: { item: CartItem }) {
 
 export default function CartPage() {
   const { cartItems, cartLoading, fetchCart } = store();
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     fetchCart();
   }, []);
 
-  const subtotal = cartItems.reduce(
+  // Keep selectedIds in sync when items are added/removed
+  useEffect(() => {
+    setSelectedIds(new Set(cartItems.map((item) => item.productId)));
+  }, [cartItems.map((i) => i.productId).join(",")]);
+
+  const allSelected = cartItems.length > 0 && cartItems.every((item) => selectedIds.has(item.productId));
+
+  function toggleItem(productId: number) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(productId)) next.delete(productId);
+      else next.add(productId);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(cartItems.map((item) => item.productId)));
+    }
+  }
+
+  const selectedItems = cartItems.filter((item) => selectedIds.has(item.productId));
+  const subtotal = selectedItems.reduce(
     (sum, item) => sum + parseFloat(item.price) * item.quantity,
     0
   );
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="bg-[#EAEDED] min-h-screen py-4">
@@ -189,9 +239,14 @@ export default function CartPage() {
               <h1 className="text-2xl font-normal text-gray-900 mb-1">
                 Shopping Cart
               </h1>
-              <button className="text-sm text-[#2261A1] hover:text-[#C45500] hover:underline mb-3">
-                Deselect all items
-              </button>
+              {cartItems.length > 0 && (
+                <button
+                  onClick={toggleAll}
+                  className="text-sm text-[#2261A1] hover:text-[#C45500] hover:underline mb-3"
+                >
+                  {allSelected ? "Deselect all items" : "Select all items"}
+                </button>
+              )}
             </div>
 
             <div className="flex justify-end text-sm text-gray-500 px-5 pb-2 border-b border-gray-200">
@@ -220,7 +275,12 @@ export default function CartPage() {
             )}
 
             {cartItems.map((item) => (
-              <CartItemRow key={item.productId} item={item} />
+              <CartItemRow
+                key={item.productId}
+                item={item}
+                isSelected={selectedIds.has(item.productId)}
+                onToggle={() => toggleItem(item.productId)}
+              />
             ))}
 
             {cartItems.length > 0 && (
@@ -242,7 +302,7 @@ export default function CartPage() {
               Your Items
             </h2>
             <div className="flex border-b border-gray-200 mb-4">
-              <button className="pb-2 border-b-2 border-[#232F3E] font-medium text-sm mr-6">
+              <button className="text-black pb-2 border-b-2 border-[#232F3E] font-medium text-sm mr-6">
                 Saved for later
               </button>
               <button className="pb-2 text-sm text-[#2261A1] hover:text-[#C45500]">
@@ -263,13 +323,14 @@ export default function CartPage() {
                 ₹499
               </span>
             </div>
-            <p className="text-xs text-[#0C7B3C]  font-bold">
-              <span className="font-medium">✓</span> Your order
-              is eligible for FREE Delivery.
+            <p className="text-xs text-[#0C7B3C] font-bold">
+              <span className="font-medium">✓</span> Your order is eligible for
+              FREE Delivery.
             </p>
-            <p className="text-xs text-black  mb-3">
-              Choose <span className="underline text-[#2261A1]">FREE Delivery
-              </span>  option at checkout.
+            <p className="text-xs text-black mb-3">
+              Choose{" "}
+              <span className="underline text-[#2261A1]">FREE Delivery</span>{" "}
+              option at checkout.
             </p>
 
             <p className="text-base font-bold text-gray-900 mb-2">
