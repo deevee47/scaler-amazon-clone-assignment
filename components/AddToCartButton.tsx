@@ -12,12 +12,11 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
   const router = useRouter();
 
   const handleAddToCart = () => {
-    store.getState().addToCart(product);
+    store.getState().addToCart(product.id);
   };
 
   const handleBuyNow = () => {
-    store.getState().addToCart(product);
-    router.push("/cart");
+    store.getState().addToCart(product.id).then(() => router.push("/cart"));
   };
 
   return (

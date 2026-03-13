@@ -1,11 +1,15 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { store } from "@/lib/store";
 
 const CartButton = () => {
-  const { cartProduct } = store();
+  const { cartItems, fetchCart } = store();
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
   return (
     <Link
@@ -21,7 +25,7 @@ const CartButton = () => {
           className="w-auto object-cover h-8"
         />
         <p className="absolute top-0 left-[58%] -translate-x-[52%] text-amazonOrangeDark text-md font-bold leading-none">
-          {cartProduct ? cartProduct.length : 0}
+          {cartItems.length}
         </p>
       </div>
       <p className="text-md text-white font-bold mt-3">Cart</p>

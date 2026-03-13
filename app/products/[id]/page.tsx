@@ -1,6 +1,7 @@
 import { Product } from "@/type";
 import ProductImageGallery from "@/components/ProductImageGallery";
 import AddToCartButton from "@/components/AddToCartButton";
+import { apiFetch } from "@/lib/api";
 
 function StarRating({ rating, count }: { rating: number; count: number }) {
   return (
@@ -72,16 +73,16 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const res = await fetch(`https://dummyjson.com/products/${id}`, {
+  const product = await apiFetch<Product>(`/api/products/${id}`, {
     next: { revalidate: 3600 },
   });
-  const product: Product = await res.json();
 
-  const mrp = Math.round(
-    product.price / (1 - product.discountPercentage / 100)
-  );
-  const discountPct = Math.round(product.discountPercentage);
-  const ratingCount = Math.round(product.rating * 100) || 349;
+  const price = parseFloat(String(product.price));
+  const discountPercentage = parseFloat(String(product.discountPercentage));
+  const rating = parseFloat(String(product.rating));
+  const mrp = Math.round(price / (1 - discountPercentage / 100));
+  const discountPct = Math.round(discountPercentage);
+  const ratingCount = Math.round(rating * 100) || 349;
 
   return (
     <div className="bg-white min-h-screen">
@@ -125,7 +126,7 @@ export default async function ProductDetailPage({
 
           {/* Rating row */}
           <div className="flex items-center gap-2 flex-wrap mb-1">
-            <StarRating rating={product.rating} count={ratingCount} />
+            <StarRating rating={rating} count={ratingCount} />
             <span className="text-gray-300 text-sm">|</span>
             <span className="text-sm text-[#007185] hover:text-[#c45500] cursor-pointer hover:underline">
               Search this page
@@ -153,7 +154,7 @@ export default async function ProductDetailPage({
             </span>
             <span className="text-3xl font-medium text-gray-900">
               <span className="text-lg">₹</span>
-              {product.price.toLocaleString("en-IN")}
+              {price.toLocaleString("en-IN")}
             </span>
           </div>
 
@@ -386,7 +387,7 @@ export default async function ProductDetailPage({
             {/* Price */}
             <div className="text-3xl font-medium text-gray-900 leading-tight">
               <span className="text-base align-top mt-1 inline-block">₹</span>
-              {product.price.toLocaleString("en-IN")}
+              {price.toLocaleString("en-IN")}
               <span className="text-sm align-super">00</span>
             </div>
 

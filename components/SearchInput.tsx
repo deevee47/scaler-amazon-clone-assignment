@@ -23,6 +23,12 @@ const SearchInput = () => {
   }, [searchQuery, products]);
 
   useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/products?limit=194`)
+      .then((r) => r.json())
+      .then((j) => setProducts(j.data?.products ?? []));
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         searchContainerRef.current &&
@@ -69,7 +75,7 @@ const SearchInput = () => {
                 <Link
                   key={item?.id}
                   href={{
-                    pathname: `/product/${item?.id}`,
+                    pathname: `/products/${item?.id}`,
                     query: { id: item?.id },
                   }}
                   onClick={() => setSearchQuery("")}

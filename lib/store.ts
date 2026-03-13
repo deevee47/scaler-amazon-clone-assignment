@@ -1,84 +1,87 @@
-import { Product } from "@/type";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { getSessionId } from "@/lib/session";
 
-interface StoreType {
-  cartProduct: Product[];
-  addToCart: (product: Product) => Promise<void>;
-  decreaseQuantity: (productId: number) => void;
-  removeFromCart: (productId: number) => void;
-  resetCart: () => void;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+
+export interface CartItem {
+  productId: number;
+  quantity: number;
+  title: string;
+  price: string;
+  thumbnail: string;
+  brand?: string | null;
+  availabilityStatus?: string | null;
 }
 
-const customStorage = {
-  getItem: (name: string) => {
-    const item = localStorage.getItem(name);
-    return item ? JSON.parse(item) : null;
-  },
-  setItem: (name: string, value: unknown): void => {
-    localStorage.setItem(name, JSON.stringify(value));
-  },
-  removeItem: (name: string) => {
-    localStorage.removeItem(name);
-  },
-};
+interface StoreType {
+  cartItems: CartItem[];
+  cartLoading: boolean;
+  fetchCart: () => Promise<void>;
+  addToCart: (productId: number) => Promise<void>;
+  updateQuantity: (productId: number, quantity: number) => Promise<void>;
+  removeFromCart: (productId: number) => Promise<void>;
+  clearCart: () => Promise<void>;
+}
 
-export const store = create<StoreType>()(
-  persist(
-    (set) => ({
-      cartProduct: [],
-      addToCart: (product: Product) => {
-        return new Promise<void>((resolve) => {
-          set((state: StoreType) => {
-            const existingProduct = state.cartProduct.find(
-              (p) => p.id === product.id
-            );
-            if (existingProduct) {
-              return {
-                cartProduct: state.cartProduct.map((p) =>
-                  p.id === product.id
-                    ? { ...p, quantity: (p.quantity || 0) + 1 }
-                    : p
-                ),
-              };
-            } else {
-              return {
-                cartProduct: [...state.cartProduct, { ...product, quantity: 1 }],
-              };
-            }
-          });
-          resolve();
-        });
-      },
-      decreaseQuantity: (productId: number) => {
-        set((state: StoreType) => {
-          const existingProduct = state.cartProduct.find(
-            (p) => p.id === productId
-          );
-          if (existingProduct) {
-            return {
-              cartProduct: state.cartProduct.map((p) =>
-                p.id === productId
-                  ? { ...p, quantity: Math.max((p?.quantity ?? 1) - 1, 1) }
-                  : p
-              ),
-            };
-          }
-          return state;
-        });
-      },
-      removeFromCart: (productId: number) => {
-        set((state: StoreType) => ({
-          cartProduct: state.cartProduct.filter((item) => item.id !== productId),
-        }));
-      },
-      resetCart: () => {
-        set({ cartProduct: [] });
-      },
-    }),
-    {
-      name: "store-storage",
-      storage: customStorage,
+function sessionHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "x-session-id": getSessionId(),
+  };
+}
+
+export const store = create<StoreType>()((set) => ({
+  cartItems: [],
+  cartLoading: false,
+
+  fetchCart: async () => {
+    set({ cartLoading: true });
+    try {
+      const res = await fetch(`${BASE_URL}/api/cart`, {
+        headers: sessionHeaders(),
+      });
+      const json = await res.json();
+      set({ cartItems: json.data ?? [] });
+    } finally {
+      set({ cartLoading: false });
     }
-  )
-);
+  },
+
+  addToCart: async (productId: number) => {
+    await fetch(`${BASE_URL}/api/cart`, {
+      method: "POST",
+      headers: sessionHeaders(),
+      body: JSON.stringify({ productId, quantity: 1 }),
+    });
+    await store.getState().fetchCart();
+  },
+
+  updateQuantity: async (productId: number, quantity: number) => {
+    if (quantity <= 0) {
+      await store.getState().removeFromCart(productId);
+      return;
+    }
+    await fetch(`${BASE_URL}/api/cart/${productId}`, {
+      method: "PATCH",
+      headers: sessionHeaders(),
+      body: JSON.stringify({ quantity }),
+    });
+    await store.getState().fetchCart();
+  },
+
+  removeFromCart: async (productId: number) => {
+    await fetch(`${BASE_URL}/api/cart/${productId}`, {
+      method: "DELETE",
+      headers: sessionHeaders(),
+    });
+    await store.getState().fetchCart();
+  },
+
+  clearCart: async () => {
+    await fetch(`${BASE_URL}/api/cart`, {
+      method: "DELETE",
+      headers: sessionHeaders(),
+    });
+    set({ cartItems: [] });
+  },
+}));

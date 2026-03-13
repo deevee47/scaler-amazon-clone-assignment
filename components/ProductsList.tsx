@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import HorizontalProductRow from "@/components/HorizontalProductRow";
 import BestSellersRow from "@/components/BestSellersRow";
+import { apiFetch } from "@/lib/api";
 
 interface SectionProduct {
   id: number;
@@ -30,11 +31,10 @@ const sections: Section[] = [
 ];
 
 async function getSectionProducts(category: string, limit = 4): Promise<SectionProduct[]> {
-  const res = await fetch(
-    `https://dummyjson.com/products/category/${category}?limit=${limit}&select=id,title,thumbnail`,
+  const data = await apiFetch<{ products: SectionProduct[] }>(
+    `/api/products?category=${category}&limit=${limit}`,
     { next: { revalidate: 3600 } }
   );
-  const data = await res.json();
   return data.products ?? [];
 }
 
