@@ -1,5 +1,5 @@
 export const DELIVERY_FEE = 80;
-export const AMAZON_PAY_BALANCE = 10000;
+export const AMAZON_PAY_BALANCE = 100000000;
 
 export const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
