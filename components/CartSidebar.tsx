@@ -24,12 +24,15 @@ export default function CartSidebar() {
   );
 
   return (
-    <div className="w-[130px] flex-shrink-0 bg-white">
+    <div className="w-[130px] flex-shrink-0">
+      <div className="fixed right-0 top-[96px] w-[130px] h-[calc(100vh-96px)] border-l border-gray-200 bg-white overflow-y-auto z-20 px-2 py-3">
       {/* Subtotal */}
       <div className="mb-2">
-        <p className="text-sm text-gray-800">
-          Subtotal ({cartItems.reduce((s, i) => s + i.quantity, 0)} items):{" "}
-          <span className="font-bold">₹{subtotal.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+        <p className="text-sm text-gray-800 text-center">
+          Subtotal ({cartItems.reduce((s, i) => s + i.quantity, 0)} items):
+        </p>
+        <p className="text-sm font-bold text-red-600 text-center">
+          ₹{subtotal.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </p>
         <p className="text-xs text-[#007600] mt-1 leading-tight">
           Your order is eligible for FREE Delivery. Select this option at checkout.{" "}
@@ -100,6 +103,7 @@ export default function CartSidebar() {
             </div>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

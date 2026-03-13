@@ -1,14 +1,12 @@
 "use client";
 
-import type { AddressPayload } from "@/lib/store";
-
-type Address = AddressPayload & { id?: string };
+import type { AddressRecord } from "@/lib/store";
 
 export default function DeliverySection({
   address,
   onChangeAddress,
 }: {
-  address: Address | null;
+  address: AddressRecord | null;
   onChangeAddress: () => void;
 }) {
   return (

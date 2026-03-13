@@ -69,7 +69,17 @@ export default function ProductImageGallery({
       <div className="w-[580px] flex-shrink-0 flex flex-col relative">
         {/* Share icon — top right of image area */}
         <div className="absolute top-0 right-0 z-10">
-          <button className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-full bg-white hover:bg-gray-50 shadow-sm">
+          <button
+            onClick={() => {
+              const url = window.location.href;
+              if (navigator.share) {
+                navigator.share({ title, url });
+              } else {
+                navigator.clipboard.writeText(url);
+              }
+            }}
+            className="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-full bg-white hover:bg-gray-50 shadow-sm"
+          >
             <svg
               className="w-5 h-5 text-gray-700"
               viewBox="0 0 24 24"

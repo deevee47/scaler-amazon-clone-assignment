@@ -78,7 +78,7 @@ export default async function ProductDetailPage({
     next: { revalidate: 3600 },
   });
   const categoryData = await apiFetch<{ products: Product[] }>(
-    `/api/products/category/${encodeURIComponent(product.category)}`,
+    `/api/products?category=${encodeURIComponent(product.category)}&limit=20`,
     { next: { revalidate: 3600 } }
   ).catch(() => ({ products: [] as Product[] }));
   const relatedProducts = categoryData.products.filter((p) => p.id !== product.id);
@@ -152,9 +152,6 @@ export default async function ProductDetailPage({
           {/* Ask Rufus */}
           <div className="mt-4 w-[640px]">
             <div className="flex items-center gap-1.5 mb-2">
-              <span className="w-5 h-5 rounded-full bg-[#FF9900] flex items-center justify-center">
-                <span className="text-white text-[10px] font-black">•</span>
-              </span>
               <span className="text-sm font-semibold text-gray-800">Ask Rufus</span>
             </div>
             <div className="flex flex-wrap gap-2 mb-2">
@@ -316,9 +313,8 @@ export default async function ProductDetailPage({
               {variantImages.map((src, i) => (
                 <div key={i} className="flex flex-col items-center gap-1">
                   <button
-                    className={`relative w-[55px] h-[55px] border-2 rounded overflow-hidden ${
-                      i === 0 ? "border-[#007EB9]" : "border-gray-300 hover:border-[#c45500]"
-                    }`}
+                    className={`relative w-[55px] h-[55px] border-2 rounded overflow-hidden ${i === 0 ? "border-[#007EB9]" : "border-gray-300 hover:border-[#c45500]"
+                      }`}
                   >
                     <img
                       src={src}
@@ -397,114 +393,205 @@ export default async function ProductDetailPage({
 
           {/* Main buy box */}
           <div className="border border-[#D5D9D9] rounded-xl overflow-hidden">
-          {/* Price and details */}
-          <div className="px-4 py-3 flex flex-col gap-2.5">
-            {/* Price */}
-            <div className="text-3xl font-[550] text-gray-900 leading-tight">
-              <span className="text-base align-top mt-1 inline-block">₹</span>
-              {price.toLocaleString("en-IN")}
-            </div>
+            {/* Price and details */}
+            <div className="px-4 py-3 flex flex-col gap-2.5">
+              {/* Price */}
+              <div className="text-3xl font-[550] text-gray-900 leading-tight">
+                <span className="text-base align-top mt-1 inline-block">₹</span>
+                {price.toLocaleString("en-IN")}
+              </div>
 
-            {/* Fulfilled badge */}
-            <img
-              src="/banner/amazon-fulfilled.png"
-              alt="Amazon Fulfilled"
-              className="h-5 w-fit"
-            />
+              {/* Fulfilled badge */}
+              <img
+                src="/banner/amazon-fulfilled.png"
+                alt="Amazon Fulfilled"
+                className="h-5 w-fit"
+              />
 
-            {/* Free delivery */}
-            <p className="text-sm text-gray-700">
-              FREE delivery{" "}
-              <span className="font-bold">{deliveryDate}.</span>{" "}
-              <span className="text-[#2261A1] hover:underline cursor-pointer">
-                Details
-              </span>
-            </p>
+              {/* Free delivery */}
+              <p className="text-sm text-gray-700">
+                FREE delivery{" "}
+                <span className="font-bold">{deliveryDate}.</span>{" "}
+                <span className="text-[#2261A1] hover:underline cursor-pointer">
+                  Details
+                </span>
+              </p>
 
-            {/* Location */}
-            <DeliveryLocationWidget />
+              {/* Location */}
+              <DeliveryLocationWidget />
 
-            {/* Stock */}
-            <p
-              className={`text-md font-semibold ${product.stock > 0 ? "text-[#007600]" : "text-red-600"}`}
-            >
-              {product.stock > 0 ? "In stock" : "Out of stock"}
-            </p>
-
-            {/* Ships from / Sold by table */}
-            <div className="grid text-xs grid-cols-2 gap-x-2 gap-y-1 text-sm">
-              <span className="text-gray-500">Ships from</span>
-              <span className="text-gray-800">{product.brand || "Amazon"}</span>
-              <span className="text-gray-500">Sold by</span>
-              <span className="text-[#2261A1] hover:underline cursor-pointer">
-                {product.brand || "Amazon"}
-              </span>
-              <span className="text-gray-500">Gift options</span>
-              <span className="text-[#2261A1] hover:underline cursor-pointer">
-                Available at checkout
-              </span>
-              <span className="text-gray-500">Payment</span>
-              <span className="text-[#2261A1] hover:underline cursor-pointer">
-                Secure transaction
-              </span>
-            </div>
-
-            {/* See more */}
-            <button className="flex items-center gap-0.5 text-sm text-[#2261A1] hover:underline w-fit">
-              <svg
-                className="w-3.5 h-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
+              {/* Stock */}
+              <p
+                className={`text-md font-semibold ${product.stock > 0 ? "text-[#007600]" : "text-red-600"}`}
               >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-              See more
-            </button>
+                {product.stock > 0 ? "In stock" : "Out of stock"}
+              </p>
 
-            <hr className="border-gray-200" />
+              {/* Ships from / Sold by table */}
+              <div className="grid text-xs grid-cols-2 gap-x-2 gap-y-1 text-sm">
+                <span className="text-gray-500">Ships from</span>
+                <span className="text-gray-800">{product.brand || "Amazon"}</span>
+                <span className="text-gray-500">Sold by</span>
+                <span className="text-[#2261A1] hover:underline cursor-pointer">
+                  {product.brand || "Amazon"}
+                </span>
+                <span className="text-gray-500">Gift options</span>
+                <span className="text-[#2261A1] hover:underline cursor-pointer">
+                  Available at checkout
+                </span>
+                <span className="text-gray-500">Payment</span>
+                <span className="text-[#2261A1] hover:underline cursor-pointer">
+                  Secure transaction
+                </span>
+              </div>
 
-            {/* Protection Plan */}
-            <label className="flex items-start gap-2 text-xs text-gray-700 cursor-pointer">
-              <input type="checkbox" className="mt-0.5 flex-shrink-0" />
-              <span>
-                <span className="font-semibold">Add Protection Plan</span>
-                <br />
-                1 Year Extended Warranty Plan by Onsitego for ₹353.00
-              </span>
-            </label>
+              {/* See more */}
+              <button className="flex items-center gap-0.5 text-sm text-[#2261A1] hover:underline w-fit">
+                <svg
+                  className="w-3.5 h-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+                See more
+              </button>
 
-            <hr className="border-gray-200" />
+              <hr className="border-gray-200" />
 
-            {/* Quantity */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-700 font-medium">
-                Quantity:
-              </span>
-              <select className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 bg-gray-50 hover:bg-gray-100">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
+              {/* Protection Plan */}
+              <label className="flex items-start gap-2 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" className="mt-0.5 flex-shrink-0" />
+                <span>
+                  <span className="font-semibold">Add Protection Plan</span>
+                  <br />
+                  1 Year Extended Warranty Plan by Onsitego for ₹353.00
+                </span>
+              </label>
+
+              <hr className="border-gray-200" />
+
+              {/* Quantity */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-700 font-medium">
+                  Quantity:
+                </span>
+                <select className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 bg-gray-50 hover:bg-gray-100">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Cart buttons */}
+              {product.stock > 0 && <AddToCartButton product={product} />}
+
+              {/* Wish List button */}
+              <button className="w-full border border-gray-400 rounded-full text-sm py-2 text-gray-800 hover:bg-gray-50 font-medium">
+                Add to Wish List
+              </button>
             </div>
-
-            {/* Cart buttons */}
-            {product.stock > 0 && <AddToCartButton product={product} />}
-
-            {/* Wish List button */}
-            <button className="w-full border border-gray-400 rounded-full text-sm py-2 text-gray-800 hover:bg-gray-50 font-medium">
-              Add to Wish List
-            </button>
-          </div>
           </div>
         </div>
 
         {/* Cart sidebar — 4th column, only visible when cart has items */}
         <CartSidebar />
       </div>
+
+      {/* Related products carousel */}
+      {relatedProducts.length > 0 && (
+        <div className="pl-6 pr-[154px] py-6 border-t border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">
+              Relevant items customers are likely to buy
+            </h2>
+          </div>
+          <Carousel opts={{ align: "start", dragFree: true }}>
+            <CarouselContent className="-ml-3">
+              {relatedProducts.map((p) => {
+                const pPrice = parseFloat(String(p.price));
+                const pDiscount = parseFloat(String(p.discountPercentage));
+                const pMrp = Math.round(pPrice / (1 - pDiscount / 100));
+                const pDiscountPct = Math.round(pDiscount);
+                const pRating = parseFloat(String(p.rating));
+                const pRatingCount = Math.round(pRating * 100) || 349;
+                const deliveryDays = 3 + (p.id % 3);
+                const deliveryDt = new Date(Date.now() + deliveryDays * 24 * 60 * 60 * 1000)
+                  .toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" });
+                const DEAL_LABELS = ["Limited time deal", "Deal selling fast", "Limited time deal", "Top Pick", "Limited time deal"];
+                const pDealLabel = DEAL_LABELS[p.id % DEAL_LABELS.length];
+                return (
+                  <CarouselItem key={p.id} className="pl-3 basis-[200px] flex-shrink-0">
+                    <Link href={`/products/${p.id}`} className="block group">
+                      {/* Image */}
+                      <div className="relative w-full aspect-square bg-white border border-gray-100 rounded mb-2 overflow-hidden">
+                        <Image
+                          src={p.thumbnail}
+                          alt={p.title}
+                          fill
+                          className="object-contain p-3 group-hover:scale-105 transition-transform duration-200"
+                          sizes="200px"
+                        />
+                      </div>
+
+                      {/* Title */}
+                      <p className="text-sm text-[#2261A1] group-hover:text-[#c45500] group-hover:underline leading-snug line-clamp-2 mb-1">
+                        {p.title}
+                      </p>
+
+                      {/* Stars */}
+                      <div className="flex items-center gap-1 mb-1">
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <svg key={star} className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none">
+                              <polygon
+                                points="10,1 12.9,7 19.5,7.6 14.5,12 16.2,18.5 10,15 3.8,18.5 5.5,12 0.5,7.6 7.1,7"
+                                fill={pRating >= star ? "#FFA41C" : pRating >= star - 0.5 ? "url(#half)" : "#D1D5DB"}
+                              />
+                            </svg>
+                          ))}
+                        </div>
+                        <span className="text-xs text-[#2261A1]">{pRatingCount.toLocaleString()}</span>
+                      </div>
+
+                      {/* Discount + Price */}
+                      <div className="flex items-baseline gap-1.5 mb-0.5">
+                        <span className="text-sm font-bold text-red-500">-{pDiscountPct}%</span>
+                        <span className="text-base font-semibold text-gray-900">
+                          <span className="text-xs align-top">₹</span>{pPrice.toLocaleString("en-IN")}
+                          <sup className="text-[10px] font-normal">00</sup>
+                        </span>
+                      </div>
+
+                      {/* Deal badge */}
+                      <span className="inline-block bg-[#CC0C39] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">
+                        {pDealLabel}
+                      </span>
+
+                      {/* MRP */}
+                      <p className="text-xs text-gray-500 mb-0.5">
+                        M.R.P.: <span className="line-through">₹{pMrp.toLocaleString("en-IN")}</span>
+                      </p>
+
+                      {/* Delivery */}
+                      <p className="text-xs text-gray-700">
+                        Get it by <span className="font-bold">{deliveryDt}</span>
+                      </p>
+                      <p className="text-xs text-gray-700">FREE Delivery by Amazon</p>
+                    </Link>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="left-0 border border-gray-300 shadow-sm" />
+            <CarouselNext className="right-0 border border-gray-300 shadow-sm" />
+          </Carousel>
+        </div>
+      )}
     </div>
   );
 }
