@@ -25,6 +25,35 @@ export interface WishlistItem {
   ratingCount: number;
 }
 
+export interface AddressRecord {
+  id: number;
+  sessionId: string;
+  fullName: string;
+  mobile: string | null;
+  pincode: string | null;
+  flat: string | null;
+  area: string | null;
+  landmark: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  isDefault: boolean | null;
+  createdAt: string | null;
+}
+
+export interface AddressPayload {
+  fullName: string;
+  mobile?: string;
+  pincode?: string;
+  flat?: string;
+  area?: string;
+  landmark?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  isDefault?: boolean;
+}
+
 interface RawCartItem {
   id: number;
   sessionId: string;
@@ -69,6 +98,9 @@ interface StoreType {
   saveForLater: (productId: number) => Promise<void>;
   moveToCart: (productId: number) => Promise<void>;
   removeFromWishlist: (productId: number) => Promise<void>;
+  addresses: AddressRecord[];
+  fetchAddresses: () => Promise<void>;
+  saveAddress: (data: AddressPayload) => Promise<void>;
 }
 
 function sessionHeaders() {
@@ -82,6 +114,7 @@ export const store = create<StoreType>()((set, get) => ({
   cartItems: [],
   cartLoading: false,
   wishlistItems: [],
+  addresses: [],
 
   fetchCart: async () => {
     set({ cartLoading: true });
@@ -207,5 +240,22 @@ export const store = create<StoreType>()((set, get) => ({
       headers: sessionHeaders(),
       body: JSON.stringify({ productId }),
     });
+  },
+
+  fetchAddresses: async () => {
+    const res = await fetch(`${BASE_URL}/api/addresses`, {
+      headers: sessionHeaders(),
+    });
+    const json = await res.json();
+    set({ addresses: json.data ?? [] });
+  },
+
+  saveAddress: async (data: AddressPayload) => {
+    await fetch(`${BASE_URL}/api/addresses`, {
+      method: "POST",
+      headers: sessionHeaders(),
+      body: JSON.stringify(data),
+    });
+    await get().fetchAddresses();
   },
 }));
