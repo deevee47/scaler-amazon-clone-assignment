@@ -82,7 +82,7 @@ export default function CheckoutPage() {
       if (!res.ok) throw new Error("Order failed");
       const data = await res.json();
       await clearCart();
-      router.push(`/order-confirmation/${data.id}`);
+      router.push(`/order-confirmation/${data.data.id}`);
     } catch {
       showToast("Failed to place order. Please try again.");
     }
