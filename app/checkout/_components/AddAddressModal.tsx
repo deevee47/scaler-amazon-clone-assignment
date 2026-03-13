@@ -18,6 +18,7 @@ export default function AddAddressModal({
   const [form, setForm] = useState({
     country: "India",
     fullName: "",
+    email: "",
     mobile: "",
     pincode: "",
     flat: "",
@@ -45,6 +46,7 @@ export default function AddAddressModal({
   function handleSubmit() {
     onSave({
       fullName: form.fullName,
+      email: form.email,
       mobile: form.mobile,
       pincode: form.pincode,
       flat: form.flat,
@@ -112,6 +114,18 @@ export default function AddAddressModal({
               onChange={(e) => set("fullName", e.target.value)}
               className={inputCls}
             />
+          </div>
+
+          <div>
+            <label className={labelCls}>Email address</label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => set("email", e.target.value)}
+              placeholder="For order confirmation"
+              className={inputCls}
+            />
+            <p className="text-xs text-[#565959] mt-1">Order confirmation will be sent to this email</p>
           </div>
 
           <div>

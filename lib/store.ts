@@ -29,6 +29,7 @@ export interface AddressRecord {
   id: number;
   sessionId: string;
   fullName: string;
+  email: string | null;
   mobile: string | null;
   pincode: string | null;
   flat: string | null;
@@ -43,6 +44,7 @@ export interface AddressRecord {
 
 export interface AddressPayload {
   fullName: string;
+  email?: string;
   mobile?: string;
   pincode?: string;
   flat?: string;

@@ -54,7 +54,7 @@ export default function CheckoutPage() {
     };
 
     const body = {
-      email: "guest@amazon.in",
+      email: address.email ?? "guest@amazon.in",
       shippingAddress: {
         name: address.fullName,
         phone: address.mobile ?? "",
